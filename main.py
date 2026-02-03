@@ -37,8 +37,12 @@ class USStatesGuesser:
         self.states_df = pd.read_csv(cons.STATES_PATH)
         self.guessed_states = []
 
-    def check_user_guess(self,user_guess):
+    def check_user_guess(self,user_guess:str):
         """Checks if user guess matches the state list"""
+
+        if user_guess.lower() == "esc":
+            self.exit_game()
+
         matching_rows = self.states_df[self.states_df.state.str.lower()==user_guess]
         if not matching_rows.empty:
             print(matching_rows)
@@ -48,11 +52,18 @@ class USStatesGuesser:
             self.guessed_states.append(matching_row.state)
             self.screen.title(f"{len(self.guessed_states)}/{len(self.states_df)} states guessed.")
             print(f"Guessed states:{self.guessed_states}")
-            if len(self.guessed_states) == 2:
+            if len(self.guessed_states) == len(self.states_df):
                 msg.showinfo("WON","Great job on getting all of them.")
                 self.game_on = False
         else:
             self.screen.title("No match found.")
+
+    def exit_game(self):
+        """Exits game"""
+        self.game_on = False
+
+        df = self.states_df[~self.states_df.state.isin(self.guessed_states)]
+        df[["state"]].to_csv(cons.EXIT_PATH,index=False)
 
 
     def run(self):
@@ -60,7 +71,7 @@ class USStatesGuesser:
         while self.game_on is True:
             self.check_user_guess(self.take_user_input())
 
-        self.screen.mainloop()
+        self.screen.bye()
 
 game = USStatesGuesser()
 game.run()
