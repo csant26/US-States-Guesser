@@ -1,4 +1,5 @@
 """Constants"""
 
-# Image Path
+# File Path
 IMAGE_PATH = "blank_states_img.gif"
+STATES_PATH = "50_states.csv"
